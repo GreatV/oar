@@ -86,7 +86,7 @@ class HardSwish(nn.Layer):
 
 def hard_sigmoid(x: paddle.Tensor, inplace: bool = False):
     if inplace:
-        return x.add_(3.0).clamp_(0.0, 6.0).div_(6.0)
+        return x.add_(3.0).clip_(0.0, 6.0).div_(6.0)
     else:
         return F.relu6(x + 3.0) / 6.0
 
@@ -106,9 +106,9 @@ def hard_mish(x: paddle.Tensor, inplace: bool = False):
       https://github.com/digantamisra98/H-Mish/blob/0da20d4bc58e696b6803f2523c58d3c8a82782d0/README.md
     """
     if inplace:
-        return x.multiply_(0.5 * (x + 2).clamp(min=0, max=2))
+        return x.multiply_(0.5 * (x + 2).clip(min=0, max=2))
     else:
-        return 0.5 * x * (x + 2).clamp(min=0, max=2)
+        return 0.5 * x * (x + 2).clip(min=0, max=2)
 
 
 class HardMish(nn.Layer):

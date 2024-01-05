@@ -101,7 +101,7 @@ class MishMe(nn.Layer):
 
 @paddle.jit.to_static
 def hard_sigmoid_jit_fwd(x: paddle.Tensor, inplace: bool = False):
-    return (x + 3).clamp(min=0, max=6).div(6.0)
+    return (x + 3).clip(min=0, max=6).div(6.0)
 
 
 @paddle.jit.to_static
@@ -136,7 +136,7 @@ class HardSigmoidMe(nn.Layer):
 
 @paddle.jit.to_static
 def hard_swish_jit_fwd(x: paddle.Tensor):
-    return x * (x + 3).clamp(min=0, max=6).div(6.0)
+    return x * (x + 3).clip(min=0, max=6).div(6.0)
 
 
 @paddle.jit.to_static
@@ -192,7 +192,7 @@ class HardSwishMe(nn.Layer):
 
 @paddle.jit.to_static
 def hard_mish_jit_fwd(x):
-    return 0.5 * x * (x + 2).clamp(min=0, max=2)
+    return 0.5 * x * (x + 2).clip(min=0, max=2)
 
 
 @paddle.jit.to_static

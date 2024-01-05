@@ -46,7 +46,7 @@ class MishJit(nn.Layer):
 @paddle.jit.to_static
 def hard_sigmoid_jit(x: paddle.Tensor, inplace: bool = False):
     # return F.relu6(x + 3.) / 6.
-    return (x + 3).clamp(min=0, max=6).div(6.0)  # clamp seems ever so slightly faster?
+    return (x + 3).clip(min=0, max=6).div(6.0)  # clamp seems ever so slightly faster?
 
 
 class HardSigmoidJit(nn.Layer):
@@ -60,7 +60,7 @@ class HardSigmoidJit(nn.Layer):
 @paddle.jit.to_static
 def hard_swish_jit(x: paddle.Tensor, inplace: bool = False):
     # return x * (F.relu6(x + 3.) / 6)
-    return x * (x + 3).clamp(min=0, max=6).div(
+    return x * (x + 3).clip(min=0, max=6).div(
         6.0
     )  # clamp seems ever so slightly faster?
 
@@ -79,7 +79,7 @@ def hard_mish_jit(x: paddle.Tensor, inplace: bool = False):
     Experimental, based on notes by Mish author Diganta Misra at
       https://github.com/digantamisra98/H-Mish/blob/0da20d4bc58e696b6803f2523c58d3c8a82782d0/README.md
     """
-    return 0.5 * x * (x + 2).clamp(min=0, max=2)
+    return 0.5 * x * (x + 2).clip(min=0, max=2)
 
 
 class HardMishJit(nn.Layer):
