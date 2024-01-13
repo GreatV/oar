@@ -4,7 +4,7 @@ import os
 import warnings
 from typing import Any, Optional
 
-import paddle
+from paddle import nn
 
 __all__ = [
     "is_exportable",
@@ -34,7 +34,7 @@ _SCRIPTABLE = False
 
 
 # use torch.scaled_dot_product_attention where possible
-_HAS_FUSED_ATTN = hasattr(paddle.nn.functional, "scaled_dot_product_attention")
+_HAS_FUSED_ATTN = hasattr(nn.functional, "scaled_dot_product_attention")
 if "OAR_FUSED_ATTN" in os.environ:
     _USE_FUSED_ATTN = int(os.environ["OAR_FUSED_ATTN"])
 else:

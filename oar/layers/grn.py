@@ -11,10 +11,11 @@ This implementation
 Hacked together by / Copyright 2023 Ross Wightman
 """
 import paddle
+from paddle import nn
 from paddle.nn import initializer as init
 
 
-class GlobalResponseNorm(paddle.nn.Layer):
+class GlobalResponseNorm(nn.Layer):
     """Global Response Normalization layer"""
 
     def __init__(self, dim, eps=1e-06, channels_last=True):

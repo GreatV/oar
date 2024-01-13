@@ -52,15 +52,14 @@ from .activations_me import (
 )
 from .config import is_exportable, is_scriptable, is_no_jit
 
-import paddle
 from paddle import nn
 from paddle.nn import functional as F
 
 
-_has_silu = "silu" in dir(paddle.nn.functional)
-_has_hardswish = "hardswish" in dir(paddle.nn.functional)
-_has_hardsigmoid = "hardsigmoid" in dir(paddle.nn.functional)
-_has_mish = "mish" in dir(paddle.nn.functional)
+_has_silu = "silu" in dir(nn.functional)
+_has_hardswish = "hardswish" in dir(nn.functional)
+_has_hardsigmoid = "hardsigmoid" in dir(nn.functional)
+_has_mish = "mish" in dir(nn.functional)
 
 _ACT_FN_DEFAULT = dict(
     silu=F.silu if _has_silu else swish,
