@@ -11,7 +11,8 @@ NOTE: extent=0 + extra_params=False is equivalent to Squeeze-and-Excitation
 
 Hacked together by / Copyright 2021 Ross Wightman
 """
-import paddle
+from paddle import nn
+from paddle.nn import functional as F
 import math
 from .create_act import create_act_layer, get_act_layer
 from .create_conv2d import create_conv2d
@@ -19,7 +20,7 @@ from .helpers import make_divisible
 from .mlp import ConvMlp
 
 
-class GatherExcite(paddle.nn.Layer):
+class GatherExcite(nn.Layer):
     """Gather-Excite Attention Module"""
 
     def __init__(
@@ -33,8 +34,8 @@ class GatherExcite(paddle.nn.Layer):
         rd_channels=None,
         rd_divisor=1,
         add_maxpool=False,
-        act_layer=paddle.nn.ReLU,
-        norm_layer=paddle.nn.BatchNorm2D,
+        act_layer=nn.ReLU,
+        norm_layer=nn.BatchNorm2D,
         gate_layer="sigmoid",
     ):
         super(GatherExcite, self).__init__()
@@ -42,7 +43,7 @@ class GatherExcite(paddle.nn.Layer):
         act_layer = get_act_layer(act_layer)
         self.extent = extent
         if extra_params:
-            self.gather = paddle.nn.Sequential()
+            self.gather = nn.Sequential()
             if extent == 0:
                 assert (
                     feat_size is not None
@@ -60,7 +61,7 @@ class GatherExcite(paddle.nn.Layer):
                 if norm_layer:
                     self.gather.add_sublayer(
                         name=f"norm1",
-                        sublayer=paddle.nn.BatchNorm2D(num_features=channels),
+                        sublayer=nn.BatchNorm2D(num_features=channels),
                     )
             else:
                 assert extent % 2 == 0
@@ -75,7 +76,7 @@ class GatherExcite(paddle.nn.Layer):
                     if norm_layer:
                         self.gather.add_sublayer(
                             name=f"norm{i + 1}",
-                            sublayer=paddle.nn.BatchNorm2D(num_features=channels),
+                            sublayer=nn.BatchNorm2D(num_features=channels),
                         )
                     if i != num_conv - 1:
                         self.gather.add_sublayer(
@@ -97,7 +98,7 @@ class GatherExcite(paddle.nn.Layer):
         self.mlp = (
             ConvMlp(channels, rd_channels, act_layer=act_layer)
             if use_mlp
-            else paddle.nn.Identity()
+            else nn.Identity()
         )
         self.gate = create_act_layer(gate_layer)
 
@@ -110,7 +111,7 @@ class GatherExcite(paddle.nn.Layer):
             if self.add_maxpool:
                 x_ge = 0.5 * x_ge + 0.5 * x.amax(axis=(2, 3), keepdim=True)
         else:
-            x_ge = paddle.nn.functional.avg_pool2d(
+            x_ge = F.avg_pool2d(
                 kernel_size=self.gk,
                 stride=self.gs,
                 padding=self.gk // 2,
@@ -118,10 +119,10 @@ class GatherExcite(paddle.nn.Layer):
                 exclusive=not False,
             )
             if self.add_maxpool:
-                x_ge = 0.5 * x_ge + 0.5 * paddle.nn.functional.max_pool2d(
+                x_ge = 0.5 * x_ge + 0.5 * F.max_pool2d(
                     x=x, kernel_size=self.gk, stride=self.gs, padding=self.gk // 2
                 )
         x_ge = self.mlp(x_ge)
         if x_ge.shape[-1] != 1 or x_ge.shape[-2] != 1:
-            x_ge = paddle.nn.functional.interpolate(x=x_ge, size=size)
+            x_ge = F.interpolate(x=x_ge, size=size)
         return x * self.gate(x_ge)
