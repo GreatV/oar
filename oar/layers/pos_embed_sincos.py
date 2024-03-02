@@ -2,6 +2,7 @@
 
 Hacked together by / Copyright 2022 Ross Wightman
 """
+
 import paddle
 from paddle import nn
 import math
