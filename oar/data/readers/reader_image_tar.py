@@ -8,7 +8,7 @@ Hacked together by / Copyright 2020 Ross Wightman
 
 import os
 import tarfile
-from timm.utils.misc import natural_key
+from oar.utils.misc import natural_key
 from .class_map import load_class_map
 from .img_extensions import get_img_extensions
 from .reader import Reader

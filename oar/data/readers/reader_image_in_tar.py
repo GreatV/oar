@@ -17,7 +17,7 @@ import tarfile
 from glob import glob
 from typing import List, Tuple, Dict, Set, Optional, Union
 import numpy as np
-from timm.utils.misc import natural_key
+from oar.utils.misc import natural_key
 from .class_map import load_class_map
 from .img_extensions import get_img_extensions
 from .reader import Reader
